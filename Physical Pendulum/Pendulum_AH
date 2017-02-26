@@ -1,0 +1,55 @@
+# for image/visualization
+import visual
+
+display = visual.display()
+
+# are these two lines needed?
+#c = visual.cone(radius=1)
+#c.visible = 1
+
+from numpy import *	# numpy for array math and trig
+
+# properties of pendulum system
+
+g = 9.8          # grav on earth
+L = 10.0	 # physical length of bar
+d = 0.02 	 # thickness of bar: needed for graphics
+m = 10           # mass
+theta = 179      # initial upper angle (from vertical)
+thetaDot = 0.0 	 # starting velocity
+gamma = 0.06     # decay constant (approximated)
+
+
+# Set up graphics display
+
+visual.scene.title = 'Pendulum'
+visual.scene.height = visual.scene.width = 800
+pivot = array([0,0,0]) 		# pivot position of pendulum
+visual.scene.center = pivot	# graphics center
+
+
+bar = visual.cylinder(pos=pivot, axis = (L*sin(theta),
+                      -L*cos(theta),0), 
+                      radius = d, color=visual.color.yellow)
+
+visual.scene.autoscale = False   # fix window size to initial autoscale
+
+FPS = 60        # frames per second
+
+# Simple time stepping
+dt = 0.01
+t = 0.0
+
+# continuous loop
+while 1:
+    # Calculate accelleration due to gravity
+    thetaDotDot = -(m*g/L) * sin(theta) - gamma*thetaDot
+    # Change velocity according to accelleration
+    thetaDot += thetaDotDot * dt
+    # Change angle according to (updated) velocity
+    theta += thetaDot * dt
+    # Update position of graphic according to new angle
+    bar.axis = (L*sin(theta), -L*cos(theta), 0)
+    #t += dt
+        
+    visual.rate(FPS) # Slow down graphics
